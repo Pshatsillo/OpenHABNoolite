@@ -15,7 +15,8 @@ import org.openhab.core.library.items.DimmerItem;
 import org.openhab.core.library.items.SwitchItem;
 import org.openhab.model.item.binding.AbstractGenericBindingProvider;
 import org.openhab.model.item.binding.BindingConfigParseException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is responsible for parsing the binding configuration.
@@ -24,6 +25,9 @@ import org.openhab.model.item.binding.BindingConfigParseException;
  * @since 1.0.0
  */
 public class NooliteGenericBindingProvider extends AbstractGenericBindingProvider implements NooliteBindingProvider {
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(NooliteGenericBindingProvider.class);
 
 	/**
 	 * {@inheritDoc}
@@ -37,27 +41,39 @@ public class NooliteGenericBindingProvider extends AbstractGenericBindingProvide
 	 */
 	@Override
 	public void validateItemType(Item item, String bindingConfig) throws BindingConfigParseException {
-		//if (!(item instanceof SwitchItem || item instanceof DimmerItem)) {
-		//	throw new BindingConfigParseException("item '" + item.getName()
-		//			+ "' is of type '" + item.getClass().getSimpleName()
-		//			+ "', only Switch- and DimmerItems are allowed - please check your *.items configuration");
-		//}
+		// if (!(item instanceof SwitchItem || item instanceof DimmerItem)) {
+		// throw new BindingConfigParseException("item '" + item.getName()
+		// + "' is of type '" + item.getClass().getSimpleName()
+		// + "', only Switch- and DimmerItems are allowed - please check your
+		// *.items configuration");
+		// }
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void processBindingConfiguration(String context, Item item, String bindingConfig) throws BindingConfigParseException {
+	public void processBindingConfiguration(String context, Item item, String bindingConfig)
+			throws BindingConfigParseException {
 		super.processBindingConfiguration(context, item, bindingConfig);
-		NooliteBindingConfig config = new NooliteBindingConfig();
-		
-		//parse bindingconfig here ...
-		
-		addBindingConfig(item, config);		
+
+		if (bindingConfig != null) {
+			NooliteBindingConfig config = new NooliteBindingConfig();
+
+			config.itemType = item.getClass();
+			String[] configParts = bindingConfig.trim().split(":");
+			
+			config.type = configParts.length > 0 ? configParts[0] : "NO_TYPE";
+			config.channel = configParts.length > 0 ? configParts[1] : "NO_CHANNEL";
+			
+
+			addBindingConfig(item, config);
+		} else {
+			logger.warn("bindingConfig is NULL (item=" + item
+					+ ") -> process bindingConfig aborted!");
+		}
 	}
-	
-	
+
 	/**
 	 * This is a helper class holding binding specific configuration details
 	 * 
@@ -65,8 +81,30 @@ public class NooliteGenericBindingProvider extends AbstractGenericBindingProvide
 	 * @since 1.0.0
 	 */
 	class NooliteBindingConfig implements BindingConfig {
-		// put member fields here which holds the parsed values
+		Class<? extends Item> itemType;
+		public String type;
+		public String channel;
 	}
-	
-	
+
+	@Override
+	public String getChannel(String itemName) {
+		NooliteBindingConfig config = (NooliteBindingConfig) bindingConfigs
+				.get(itemName);
+		return config.channel;
+	}
+
+	@Override
+	public String getType(String itemName) {
+		NooliteBindingConfig config = (NooliteBindingConfig) bindingConfigs
+				.get(itemName);
+		return config.type;
+	}
+
+	@Override
+	public Class<? extends Item> getItemType(String itemName) {
+		NooliteBindingConfig config = (NooliteBindingConfig) bindingConfigs
+				.get(itemName);
+		return config != null ? config.itemType : null;
+	}
+
 }

@@ -2,7 +2,15 @@
 <classpath>
 	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
 	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="lib/libusb4java-1.2.0-linux-arm.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/libusb4java-1.2.0-linux-x86_64.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/libusb4java-1.2.0-linux-x86.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/libusb4java-1.2.0-osx-x86_64.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/libusb4java-1.2.0-osx-x86.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/libusb4java-1.2.0-windows-x86_64.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/libusb4java-1.2.0-windows-x86.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/usb4java-1.2.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

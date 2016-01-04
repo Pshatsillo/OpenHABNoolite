@@ -9,11 +9,18 @@
 package org.openhab.binding.noolite;
 
 import org.openhab.core.binding.BindingProvider;
+import org.openhab.core.items.Item;
 
 /**
  * @author Petros
  * @since 1.0.0
  */
 public interface NooliteBindingProvider extends BindingProvider {
+	
+	public String getChannel(String itemName);
+
+	public String getType(String itemName);
+
+	Class<? extends Item> getItemType(String itemName);
 
 }
