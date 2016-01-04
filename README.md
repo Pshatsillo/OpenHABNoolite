@@ -1,0 +1,2 @@
+# OpenHABNoolite
+Binding for nooLite
