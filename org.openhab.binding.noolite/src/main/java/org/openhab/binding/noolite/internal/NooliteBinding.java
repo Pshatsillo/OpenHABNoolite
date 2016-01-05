@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import ru.iris.noolite4j.receiver.RX2164;
 import ru.iris.noolite4j.sender.PC1116;
+import ru.iris.noolite4j.sender.TXChoose;
 import ru.iris.noolite4j.watchers.Notification;
 import ru.iris.noolite4j.watchers.Watcher;
 
@@ -48,7 +49,7 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 	 */
 	private long refreshInterval = 60000;
 	private boolean rx, tx;
-	PC1116 pc = new PC1116();
+	TXChoose pc;
 
 	public NooliteBinding() {
 	}
@@ -91,16 +92,22 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 
 		if (StringUtils.isNotBlank(PC)) {
 
-			if (PC.equals("On")) {
+			if (PC.equals("8")) {
 				tx = true;
+				pc = new TXChoose((byte) 8);
+			} else if (PC.equals("16")) {
+				tx = true;
+				pc = new TXChoose((byte) 16);
+			} else if (PC.equals("32")) {
+				tx = true;
+				pc = new TXChoose((byte) 32);
 			}
 		}
 
 		setProperlyConfigured(true);
 
 		if (tx) {
-			
-			
+
 			pc.open();
 		}
 
@@ -177,7 +184,7 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 	@Override
 	protected void execute() {
 		// the frequently executed code (polling) goes here ...
-		//logger.debug("tx is: " + tx + " rx is: " + rx);
+		// logger.debug("tx is: " + tx + " rx is: " + rx);
 
 	}
 
@@ -190,26 +197,36 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 		// event bus goes here. This method is only called if one of the
 		// BindingProviders provide a binding for the given 'itemName'.
 		logger.debug("internalReceiveCommand({},{}) is called!", itemName, command);
-		
+
 		for (NooliteBindingProvider provider : providers) {
 			for (String itemname : provider.getItemNames()) {
-				if (provider.getItemType(itemname).toString()
-						.contains("SwitchItem")) {
-					if (itemname.equals(itemName)) {
-						if (command.toString().equals("ON")) {
-							pc.turnOn(Byte.parseByte(provider.getChannel(itemName)));
-							logger.debug(provider.getChannel(itemName));
-						} else if (command.toString().equals("OFF")) {
-							pc.turnOff(Byte.parseByte(provider.getChannel(itemName)));
-							logger.debug(provider.getChannel(itemName));
+
+				if (provider.getChannel(itemName).equals("bind")) {
+					pc.bindChannel(Byte.parseByte(command.toString()));
+					logger.debug("binding " + command.toString() + " channel");
+				} else if (provider.getChannel(itemName).equals("unbind")) {
+					pc.unbindChannel(Byte.parseByte(command.toString()));
+					logger.debug("unbinding " + command.toString() + " channel");
+				} else {
+
+					if (provider.getItemType(itemname).toString().contains("SwitchItem")) {
+						if (itemname.equals(itemName)) {
+
+							if (command.toString().equals("ON")) {
+								pc.turnOn(Byte.parseByte(provider.getChannel(itemName)));
+								logger.debug(provider.getChannel(itemName));
+							} else if (command.toString().equals("OFF")) {
+								pc.turnOff(Byte.parseByte(provider.getChannel(itemName)));
+								logger.debug(provider.getChannel(itemName));
+							}
+
 						}
+
 					}
-					
-					
 				}
 			}
 		}
-		
+
 	}
 
 	/**
