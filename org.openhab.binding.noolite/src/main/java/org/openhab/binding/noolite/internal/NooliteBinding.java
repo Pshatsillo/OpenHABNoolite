@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ru.iris.noolite4j.receiver.RX2164;
-import ru.iris.noolite4j.sender.TXChoose;
 import ru.iris.noolite4j.watchers.BatteryState;
 import ru.iris.noolite4j.watchers.CommandType;
 import ru.iris.noolite4j.watchers.Notification;
@@ -52,7 +51,7 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 	private long refreshInterval = 60000;
 	private boolean rx, tx;
 	TXChoose pc;
-	//RX2164 rxw;
+	RX2164 rxw;
 
 	public NooliteBinding() {
 	}
@@ -115,40 +114,28 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 		}
 
 		if (rx) {
-			RX2164 rxw = new RX2164();
+			rxw = new RX2164();
 			Watcher watcher = new Watcher() {
 
 				@Override
 				public void onNotification(Notification notification) {
 					System.out.println("----------------------------------");
-		               System.out.println("RX2164 получил команду: ");
-		               System.out.println("Устройство: " + notification.getChannel());
-		               System.out.println("Команда: " + notification.getType().name());
-		               System.out.println("Формат данных к команде: " + notification.getDataFormat().name());
+					System.out.println("RX2164 receive command: ");
+					System.out.println("Device: " + notification.getChannel());
+					System.out.println("Command: " + notification.getType().name());
+					System.out.println("Data format: " + notification.getDataFormat().name());
 
-		               // Передаются данные с датчика
-		               if(notification.getType() == CommandType.TEMP_HUMI)
-		               {
-		                   SensorType sensor = (SensorType)notification.getValue("sensortype");
-		                   BatteryState battery = (BatteryState)notification.getValue("battery");
+					// РџРµСЂРµРґР°СЋС‚СЃСЏ РґР°РЅРЅС‹Рµ СЃ РґР°С‚С‡РёРєР°
+					if (notification.getType() == CommandType.TEMP_HUMI) {
+						SensorType sensor = (SensorType) notification.getValue("sensortype");
+						BatteryState battery = (BatteryState) notification.getValue("battery");
 
-		                   System.out.println("Температура: " + notification.getValue("temp"));
-		                   System.out.println("Влажность: " + notification.getValue("humi"));
-		                   System.out.println("Тип датчика: " + sensor.name());
-		                   System.out.println("Состояние батареи: " + battery.name());
-
-		                   if(sensor == SensorType.PT111)
-		                   {
-		                       System.out.println("Обнаружен датчик температуры и влажности");
-		                   }
-		                   else if(sensor == SensorType.PT112)
-		                   {
-		                       System.out.println("Обнаружен датчик температуры");
-		                   }
-		               }
-		           }
-					
-				
+						System.out.println("Temp: " + notification.getValue("temp"));
+						System.out.println("Himidity: " + notification.getValue("humi"));
+						System.out.println("Sensor type: " + sensor.name());
+						System.out.println("Battery: " + battery.name());
+					}
+				}
 			};
 			rxw.open();
 				rxw.addWatcher(watcher);
