@@ -12,19 +12,18 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openhab.binding.noolite.NooliteBindingProvider;
+import org.openhab.binding.noolite.internal.noolite4j.RX2164;
+import org.openhab.binding.noolite.internal.noolite4j.watchers.BatteryState;
+import org.openhab.binding.noolite.internal.noolite4j.watchers.CommandType;
+import org.openhab.binding.noolite.internal.noolite4j.watchers.Notification;
+import org.openhab.binding.noolite.internal.noolite4j.watchers.SensorType;
+import org.openhab.binding.noolite.internal.noolite4j.watchers.Watcher;
 import org.openhab.core.binding.AbstractActiveBinding;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ru.iris.noolite4j.receiver.RX2164;
-import ru.iris.noolite4j.watchers.BatteryState;
-import ru.iris.noolite4j.watchers.CommandType;
-import ru.iris.noolite4j.watchers.Notification;
-import ru.iris.noolite4j.watchers.SensorType;
-import ru.iris.noolite4j.watchers.Watcher;
 
 /**
  * Implement this class if you are going create an actively polling service like
@@ -51,7 +50,7 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 	private long refreshInterval = 60000;
 	private boolean rx, tx;
 	TXChoose pc;
-	RX2164 rxw;
+	RX2164 rxw = new RX2164();;
 
 	public NooliteBinding() {
 	}
@@ -114,35 +113,41 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 		}
 
 		if (rx) {
-			rxw = new RX2164();
+
 			Watcher watcher = new Watcher() {
 
 				@Override
 				public void onNotification(Notification notification) {
-					System.out.println("----------------------------------");
-					System.out.println("RX2164 receive command: ");
-					System.out.println("Device: " + notification.getChannel());
-					System.out.println("Command: " + notification.getType().name());
-					System.out.println("Data format: " + notification.getDataFormat().name());
 
-					// Передаются данные с датчика
-					if (notification.getType() == CommandType.TEMP_HUMI) {
-						SensorType sensor = (SensorType) notification.getValue("sensortype");
-						BatteryState battery = (BatteryState) notification.getValue("battery");
+					updateValues(notification);
 
-						System.out.println("Temp: " + notification.getValue("temp"));
-						System.out.println("Himidity: " + notification.getValue("humi"));
-						System.out.println("Sensor type: " + sensor.name());
-						System.out.println("Battery: " + battery.name());
-					}
 				}
 			};
 			rxw.open();
-				rxw.addWatcher(watcher);
-				rxw.start();
-			
+			rxw.addWatcher(watcher);
+			rxw.start();
+
 		}
 
+	}
+
+	protected void updateValues(Notification notification) {	
+		System.out.println("----------------------------------");
+		System.out.println("RX2164 receive command: ");
+		System.out.println("Device: " + notification.getChannel());
+		System.out.println("Command: " + notification.getType().name());
+		System.out.println("Data format: " + notification.getDataFormat().name());
+
+		// Передаются данные с датчика
+		if (notification.getType() == CommandType.TEMP_HUMI) {
+			SensorType sensor = (SensorType) notification.getValue("sensortype");
+			BatteryState battery = (BatteryState) notification.getValue("battery");
+
+			System.out.println("Temp: " + notification.getValue("temp"));
+			System.out.println("Himidity: " + notification.getValue("humi"));
+			System.out.println("Sensor type: " + sensor.name());
+			System.out.println("Battery: " + battery.name());
+		}
 	}
 
 	/**
@@ -217,12 +222,11 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 
 		for (NooliteBindingProvider provider : providers) {
 			for (String itemname : provider.getItemNames()) {
-
 				if (provider.getChannel(itemName).equals("bind")) {
-					//rxw.bindChannel(Byte.parseByte(command.toString()));
+					rxw.bindChannel(Byte.parseByte(command.toString()));
 					logger.debug("binding " + command.toString() + " channel");
 				} else if (provider.getChannel(itemName).equals("unbind")) {
-					//rxw.unbindChannel(Byte.parseByte(command.toString()));
+					rxw.unbindChannel(Byte.parseByte(command.toString()));
 					logger.debug("unbinding " + command.toString() + " channel");
 				} else {
 
@@ -230,10 +234,10 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 						if (itemname.equals(itemName)) {
 
 							if (command.toString().equals("ON")) {
-								pc.turnOn(Byte.parseByte(provider.getChannel(itemName)));
+								// pc.turnOn(Byte.parseByte(provider.getChannel(itemName)));
 								logger.debug(provider.getChannel(itemName));
 							} else if (command.toString().equals("OFF")) {
-								pc.turnOff(Byte.parseByte(provider.getChannel(itemName)));
+								// pc.turnOff(Byte.parseByte(provider.getChannel(itemName)));
 								logger.debug(provider.getChannel(itemName));
 							}
 

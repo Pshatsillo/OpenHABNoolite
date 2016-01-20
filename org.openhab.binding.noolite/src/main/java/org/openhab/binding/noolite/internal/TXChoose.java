@@ -3,7 +3,7 @@ package org.openhab.binding.noolite.internal;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.iris.noolite4j.sender.PC11xx;
+import org.openhab.binding.noolite.internal.noolite4j.PC11xx;
 
 public class TXChoose extends PC11xx{
 	
