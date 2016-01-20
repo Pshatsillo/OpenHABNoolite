@@ -20,9 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ru.iris.noolite4j.receiver.RX2164;
-import ru.iris.noolite4j.sender.PC1116;
 import ru.iris.noolite4j.sender.TXChoose;
+import ru.iris.noolite4j.watchers.BatteryState;
+import ru.iris.noolite4j.watchers.CommandType;
 import ru.iris.noolite4j.watchers.Notification;
+import ru.iris.noolite4j.watchers.SensorType;
 import ru.iris.noolite4j.watchers.Watcher;
 
 /**
@@ -50,6 +52,7 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 	private long refreshInterval = 60000;
 	private boolean rx, tx;
 	TXChoose pc;
+	//RX2164 rxw;
 
 	public NooliteBinding() {
 	}
@@ -112,18 +115,45 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 		}
 
 		if (rx) {
-			RX2164 rx = new RX2164();
+			RX2164 rxw = new RX2164();
 			Watcher watcher = new Watcher() {
 
 				@Override
 				public void onNotification(Notification notification) {
-					logger.debug("Command accepted");
-				}
+					System.out.println("----------------------------------");
+		               System.out.println("RX2164 получил команду: ");
+		               System.out.println("Устройство: " + notification.getChannel());
+		               System.out.println("Команда: " + notification.getType().name());
+		               System.out.println("Формат данных к команде: " + notification.getDataFormat().name());
+
+		               // Передаются данные с датчика
+		               if(notification.getType() == CommandType.TEMP_HUMI)
+		               {
+		                   SensorType sensor = (SensorType)notification.getValue("sensortype");
+		                   BatteryState battery = (BatteryState)notification.getValue("battery");
+
+		                   System.out.println("Температура: " + notification.getValue("temp"));
+		                   System.out.println("Влажность: " + notification.getValue("humi"));
+		                   System.out.println("Тип датчика: " + sensor.name());
+		                   System.out.println("Состояние батареи: " + battery.name());
+
+		                   if(sensor == SensorType.PT111)
+		                   {
+		                       System.out.println("Обнаружен датчик температуры и влажности");
+		                   }
+		                   else if(sensor == SensorType.PT112)
+		                   {
+		                       System.out.println("Обнаружен датчик температуры");
+		                   }
+		               }
+		           }
+					
+				
 			};
-			if (rx.open()) {
-				rx.addWatcher(watcher);
-				rx.start();
-			}
+			rxw.open();
+				rxw.addWatcher(watcher);
+				rxw.start();
+			
 		}
 
 	}
@@ -202,10 +232,10 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 			for (String itemname : provider.getItemNames()) {
 
 				if (provider.getChannel(itemName).equals("bind")) {
-					pc.bindChannel(Byte.parseByte(command.toString()));
+					//rxw.bindChannel(Byte.parseByte(command.toString()));
 					logger.debug("binding " + command.toString() + " channel");
 				} else if (provider.getChannel(itemName).equals("unbind")) {
-					pc.unbindChannel(Byte.parseByte(command.toString()));
+					//rxw.unbindChannel(Byte.parseByte(command.toString()));
 					logger.debug("unbinding " + command.toString() + " channel");
 				} else {
 
