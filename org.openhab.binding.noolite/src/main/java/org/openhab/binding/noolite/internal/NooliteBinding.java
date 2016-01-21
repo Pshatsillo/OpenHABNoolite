@@ -222,10 +222,10 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 
 		for (NooliteBindingProvider provider : providers) {
 			for (String itemname : provider.getItemNames()) {
-				if (provider.getChannel(itemName).equals("bind")) {
+				if ((itemname.equals(itemName)) && (provider.getChannel(itemName).equals("bind"))) {
 					rxw.bindChannel(Byte.parseByte(command.toString()));
 					logger.debug("binding " + command.toString() + " channel");
-				} else if (provider.getChannel(itemName).equals("unbind")) {
+				} else if ((itemname.equals(itemName)) &&(provider.getChannel(itemName).equals("unbind"))) {
 					rxw.unbindChannel(Byte.parseByte(command.toString()));
 					logger.debug("unbinding " + command.toString() + " channel");
 				} else {

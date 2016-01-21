@@ -367,7 +367,7 @@ public class RX2164 {
 
         ByteBuffer buf = ByteBuffer.allocateDirect(8);
         buf.put((byte) 1);
-        buf.put(channel);
+        buf.put((byte) (channel-1));
 
         logger.debug("Buffer Content: " + buf.get(0) + " " + buf.get(1) + " " + buf.get(2) + " " + buf.get(3)
         + " " + buf.get(4) + " " + buf.get(5) + " " + buf.get(6)
@@ -393,7 +393,7 @@ public class RX2164 {
 
         ByteBuffer buf = ByteBuffer.allocateDirect(8);
         buf.put((byte) 3);
-        buf.put(channel);
+        buf.put((byte) (channel-1));
 
         pause = true;
         LibUsb.controlTransfer(handle, (byte)(LibUsb.REQUEST_TYPE_CLASS | LibUsb.RECIPIENT_INTERFACE), (byte)0x9, (short)0x300, (short)0, buf, 100L);
