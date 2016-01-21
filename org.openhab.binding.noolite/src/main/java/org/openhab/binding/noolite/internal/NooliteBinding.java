@@ -19,6 +19,9 @@ import org.openhab.binding.noolite.internal.noolite4j.watchers.Notification;
 import org.openhab.binding.noolite.internal.noolite4j.watchers.SensorType;
 import org.openhab.binding.noolite.internal.noolite4j.watchers.Watcher;
 import org.openhab.core.binding.AbstractActiveBinding;
+import org.openhab.core.events.EventPublisher;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.library.types.StringType;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.osgi.framework.BundleContext;
@@ -35,6 +38,7 @@ import org.slf4j.LoggerFactory;
 public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider> {
 
 	private static final Logger logger = LoggerFactory.getLogger(NooliteBinding.class);
+	// private boolean isSetPublisher;
 
 	/**
 	 * The BundleContext. This is only valid when the bundle is ACTIVE. It is
@@ -43,6 +47,7 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 	 */
 	private BundleContext bundleContext;
 
+	private static EventPublisher ep;
 	/**
 	 * the refresh interval which is used to poll values from the Noolite server
 	 * (optional, defaults to 60000ms)
@@ -118,9 +123,7 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 
 				@Override
 				public void onNotification(Notification notification) {
-
 					updateValues(notification);
-
 				}
 			};
 			rxw.open();
@@ -131,7 +134,56 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 
 	}
 
-	protected void updateValues(Notification notification) {	
+	protected void updateValues(Notification notification) {
+
+		for (NooliteBindingProvider provider : providers) {
+			for (String itemname : provider.getItemNames()) {
+				
+				if ((provider.getType(itemname).equals("Receive"))&&(provider.getChannel(itemname).equals("bindflag"))){
+					if (notification.getType().name().equals("BIND"))	
+					eventPublisher.postUpdate(itemname, OnOffType.OFF);
+				}
+				
+				if ((provider.getType(itemname).equals("Receive"))&&(provider.getChannel(itemname).equals("test"))){
+					eventPublisher.postUpdate(itemname,
+							StringType.valueOf(String.valueOf(notification.getChannel())));
+				}
+				
+				if ((provider.getType(itemname).equals("Receive"))
+						&& (String.valueOf(notification.getChannel()).equals(provider.getChannel(itemname)))) {
+
+					logger.debug("Channel #" + provider.getChannel(itemname));
+					logger.debug("Type: " + provider.getType(itemname));
+					logger.debug("DeviceType: " + provider.getDeviceType(itemname));
+					// logger.debug("DeviceItemType: " + provider.getItemType(itemname));
+					String[] DeviceType = provider.getDeviceType(itemname).split("_");
+					//logger.debug("device is: " + DeviceType[0] + " parameter is: " + DeviceType[1]);
+					if (notification.getType().name().equals("UNBIND"))
+						rxw.unbindChannel(notification.getChannel());
+					
+					
+					
+
+					if (DeviceType[0].equals("PT111")) {
+						if (DeviceType[1].equals("t")) {
+							eventPublisher.postUpdate(itemname,
+									StringType.valueOf(String.valueOf(notification.getValue("temp"))));
+						} else if (DeviceType[1].equals("h")) {
+							eventPublisher.postUpdate(itemname,
+									StringType.valueOf(String.valueOf(notification.getValue("humi"))));
+						} else if (DeviceType[1].equals("batt")) {
+							BatteryState battery = (BatteryState) notification.getValue("battery");
+							eventPublisher.postUpdate(itemname, StringType.valueOf(String.valueOf(battery.name())));
+						}
+					} else if (DeviceType[0].contains("PU")) {
+						eventPublisher.postUpdate(itemname, StringType.valueOf(String.valueOf(notification.getType().name())));
+					}
+
+				}
+
+			}
+		}
+
 		System.out.println("----------------------------------");
 		System.out.println("RX2164 receive command: ");
 		System.out.println("Device: " + notification.getChannel());
@@ -205,9 +257,10 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 	 */
 	@Override
 	protected void execute() {
-		// the frequently executed code (polling) goes here ...
-		// logger.debug("tx is: " + tx + " rx is: " + rx);
-
+		// if (!isSetPublisher) {
+		// setEP();
+		// }
+		// setProviders();
 	}
 
 	/**
@@ -225,7 +278,7 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 				if ((itemname.equals(itemName)) && (provider.getChannel(itemName).equals("bind"))) {
 					rxw.bindChannel(Byte.parseByte(command.toString()));
 					logger.debug("binding " + command.toString() + " channel");
-				} else if ((itemname.equals(itemName)) &&(provider.getChannel(itemName).equals("unbind"))) {
+				} else if ((itemname.equals(itemName)) && (provider.getChannel(itemName).equals("unbind"))) {
 					rxw.unbindChannel(Byte.parseByte(command.toString()));
 					logger.debug("unbinding " + command.toString() + " channel");
 				} else {

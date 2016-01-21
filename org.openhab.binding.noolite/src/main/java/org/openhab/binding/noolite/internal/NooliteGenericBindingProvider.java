@@ -64,7 +64,8 @@ public class NooliteGenericBindingProvider extends AbstractGenericBindingProvide
 			String[] configParts = bindingConfig.trim().split(":");
 			
 			config.type = configParts.length > 0 ? configParts[0] : "NO_TYPE";
-			config.channel = configParts.length > 0 ? configParts[1] : "NO_CHANNEL";
+			config.channel = configParts.length > 1 ? configParts[1] : "NO_CHANNEL";
+			config.deviceType = configParts.length > 2 ? configParts[2] : "NO_DEVICE_TYPE";
 			
 
 			addBindingConfig(item, config);
@@ -84,6 +85,7 @@ public class NooliteGenericBindingProvider extends AbstractGenericBindingProvide
 		Class<? extends Item> itemType;
 		public String type;
 		public String channel;
+		public String deviceType;
 	}
 
 	@Override
@@ -105,6 +107,13 @@ public class NooliteGenericBindingProvider extends AbstractGenericBindingProvide
 		NooliteBindingConfig config = (NooliteBindingConfig) bindingConfigs
 				.get(itemName);
 		return config != null ? config.itemType : null;
+	}
+
+	@Override
+	public String getDeviceType(String itemName) {
+		NooliteBindingConfig config = (NooliteBindingConfig) bindingConfigs
+				.get(itemName);
+		return config != null ? config.deviceType : null;
 	}
 
 }

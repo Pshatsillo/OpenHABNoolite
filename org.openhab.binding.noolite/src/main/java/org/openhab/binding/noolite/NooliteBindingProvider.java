@@ -17,9 +17,11 @@ import org.openhab.core.items.Item;
  */
 public interface NooliteBindingProvider extends BindingProvider {
 	
-	public String getChannel(String itemName);
+	public String getChannel(String itemName); //Bind channel
 
-	public String getType(String itemName);
+	public String getType(String itemName); //Receive or Transfer
+	
+	public String getDeviceType(String itemName); //Device model
 
 	Class<? extends Item> getItemType(String itemName);
 

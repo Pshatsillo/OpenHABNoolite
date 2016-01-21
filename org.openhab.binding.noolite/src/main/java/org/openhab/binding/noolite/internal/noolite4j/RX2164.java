@@ -385,7 +385,7 @@ public class RX2164 {
      */
     public void unbindChannel(byte channel)
     {
-        if(channel > availableChannels-1)
+        if(channel-1 > availableChannels-1)
         {
             logger.error("Error! Channel count is less than your value!");
             return;
