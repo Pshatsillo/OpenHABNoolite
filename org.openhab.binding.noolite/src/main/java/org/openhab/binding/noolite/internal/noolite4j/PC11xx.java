@@ -39,7 +39,7 @@ public class PC11xx {
 
     private static final short VENDOR_ID = 5824; //0x16c0;
     private static final short PRODUCT_ID = 1503; //0x05df;
-    private static final Logger LOGGER = LoggerFactory.getLogger(PC11xx.class);
+    private static final Logger logger = LoggerFactory.getLogger(PC11xx.class);
     private final Context context = new Context();
     protected byte availableChannels = 8;
     private byte sendRepeat = 2;
@@ -51,7 +51,7 @@ public class PC11xx {
      */
     public void open() throws LibUsbException {
 
-        LOGGER.debug("Открывается устройство PC11xx");
+        logger.debug("Initializing PC11xx");
 
         // Инициализируем контекст libusb
         int result = LibUsb.init(context);
@@ -59,11 +59,11 @@ public class PC11xx {
         {
             try
             {
-                throw new LibUsbException("Не удалось инициализировать libusb", result);
+                throw new LibUsbException("Failed to itialize libusb", result);
             }
             catch (LibUsbException e)
             {
-                LOGGER.error("Не удалось инициализировать libusb: ", result);
+            	logger.debug("Failed to itialize libusb: ", result);
                 e.printStackTrace();
             }
         }
@@ -73,7 +73,7 @@ public class PC11xx {
      * Закрывает HID-устройство
      */
     public void close() {
-        LOGGER.debug("Закрывается устройство PC11xx");
+        logger.debug("Closing PC11xx");
         LibUsb.exit(context);
     }
 
@@ -93,7 +93,7 @@ public class PC11xx {
 
         if(sendRepeat < 0 || sendRepeat > 7)
         {
-            LOGGER.error("Количество повторов не может быть меньше 0 и больше 7");
+            logger.error("Repeat count cannot be less 0 and more 7");
             return;
         }
 
@@ -107,12 +107,12 @@ public class PC11xx {
      */
     public boolean turnOn(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Включается устройство на канале {}", (channel+1));
+        logger.debug("Turning on channel {}", (channel));
 
         /**
          * Отсчет каналов начинается с 0
@@ -136,12 +136,12 @@ public class PC11xx {
      */
     public boolean slowTurnOn(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Включается (медленно) устройство на канале {}", (channel+1));
+        logger.debug("Slow turning on device at channel {}", (channel));
 
         /**
          * Отсчет каналов начинается с 0
@@ -165,12 +165,12 @@ public class PC11xx {
      */
     public boolean slowTurnOff(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Выключается (медленно) устройство на канале {}", channel);
+        logger.debug("Slow turning off device at channel {}", channel);
 
         /**
          * Отсчет каналов начинается с 0
@@ -194,12 +194,12 @@ public class PC11xx {
      */
     public boolean toggle(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Переключается устройство на канале {}", channel);
+        logger.debug("Switching device at channel {}", channel);
 
         /**
          * Отсчет каналов начинается с 0
@@ -223,12 +223,12 @@ public class PC11xx {
      */
     public boolean revertSlowTurn(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Плавное изменение яркости в обратном направлении на канале {}", channel);
+        logger.debug("Smoothly changes light on channel {}", channel);
 
         /**
          * Отсчет каналов начинается с 0
@@ -256,12 +256,12 @@ public class PC11xx {
      */
     public boolean setLevelRGB(byte channel, byte R, byte G, byte B)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Устанавливается яркость для кажого цвета RGB-контроллера на канале {}", channel);
+        logger.debug("Set bright on every channel of RGB-controller on channel {}", channel);
 
         /**
          * Отсчет каналов начинается с 0
@@ -288,7 +288,7 @@ public class PC11xx {
      */
     public boolean callScene()
     {
-        LOGGER.debug("Вызывается записанный сценарий");
+        logger.debug("Calling Scenario");
 
         buf.position(1);
         buf.put((byte) CommandType.RUN_SCENE.getCode());
@@ -304,7 +304,7 @@ public class PC11xx {
      */
     public boolean recordScene()
     {
-        LOGGER.debug("Записывается сценарий");
+        logger.debug("Recording scenario");
 
         buf.position(1);
         buf.put((byte) CommandType.RECORD_SCENE.getCode());
@@ -321,12 +321,12 @@ public class PC11xx {
      */
     public boolean stopDimBright(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Останавливается регулировка яркости на канале {}", channel);
+        logger.debug("Stopping dimmer on channel {}", channel);
 
         /**
          * Отсчет каналов начинается с 0
@@ -350,12 +350,12 @@ public class PC11xx {
      */
     public boolean slowRGBChange(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Включение плавного перебора цвета на канале {}", channel);
+        logger.debug("Turning on smooth change of RGB channels {}", channel);
 
         /**
          * Отсчет каналов начинается с 0
@@ -380,12 +380,12 @@ public class PC11xx {
      */
     public boolean colorChange(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Переключение цвета на канале {}", channel);
+        logger.debug("Переключение цвета на канале {}", channel);
 
         /**
          * Отсчет каналов начинается с 0
@@ -410,12 +410,12 @@ public class PC11xx {
      */
     public boolean switchRGBMode(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Переключение режима работы RGB-контроллера на канале {}", channel);
+        logger.debug("Переключение режима работы RGB-контроллера на канале {}", channel);
 
         /**
          * Отсчет каналов начинается с 0
@@ -440,12 +440,12 @@ public class PC11xx {
      */
     public boolean switchSpeedRGBMode(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Переключение скорости эффекта в режиме работы RGB-контроллера на канале {}", channel);
+        logger.debug("Переключение скорости эффекта в режиме работы RGB-контроллера на канале {}", channel);
 
         /**
          * Отсчет каналов начинается с 0
@@ -470,12 +470,12 @@ public class PC11xx {
      */
     public boolean turnOff(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
-        LOGGER.debug("Выключается устройство на канале {}", channel);
+        logger.debug("Turn off channel {}", channel);
 
         /**
          * Отсчет каналов начинается с 0
@@ -500,8 +500,8 @@ public class PC11xx {
      */
     public boolean setLevel(byte channel, byte level)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
@@ -514,21 +514,21 @@ public class PC11xx {
         buf.put((byte) CommandType.SET_LEVEL.getCode());
         buf.put((byte) 1);
 
-        if (level > 100)
+        if (level > 99)
         {
-            LOGGER.debug("Включается устройство на канале " + (channel+1));
-            level = 100;
-        }
+            logger.debug("Turn on channel " + (channel ));
+            level = (byte) 155;
+       }
         else if (level < 0)
         {
-            LOGGER.debug("Выключается устройство на канале " + (channel+1));
+            logger.debug("Turn off channel " + (channel ));
             level = 0;
         }
         else
         {
-            LOGGER.debug("Устанавливается уровень {} на канале {}", level, (channel+1));
+            logger.debug("setting level {} on channel {}", level, (channel ));
         }
-
+        
         buf.position(5);
         buf.put(level);
 
@@ -547,8 +547,8 @@ public class PC11xx {
      */
     public boolean bindChannel(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
@@ -557,7 +557,7 @@ public class PC11xx {
         buf.position(4);
         buf.put((byte) (channel-1));
 
-        LOGGER.debug("Включен режим привязки для канала " + channel);
+        logger.debug("Binding channel " + channel);
 
         writeToHID(buf);
         return true;
@@ -570,8 +570,8 @@ public class PC11xx {
      */
     public boolean unbindChannel(byte channel)
     {
-        if(channel >= availableChannels-1) {
-            LOGGER.error("Максимальное количество каналов: " + availableChannels);
+        if(channel-1 >= availableChannels-1) {
+            logger.error("Total channels: " + availableChannels);
             return false;
         }
 
@@ -580,7 +580,7 @@ public class PC11xx {
         buf.position(4);
         buf.put((byte) (channel-1));
 
-        LOGGER.debug("Включен режим отвязки для канала " + channel);
+        logger.debug("Unbinding channel " + channel);
 
         writeToHID(buf);
         return true;
@@ -596,7 +596,7 @@ public class PC11xx {
 
         if (handle == null)
         {
-            LOGGER.error("Устройство PC11XX не найдено!");
+            logger.error("Device PC11XX not found!");
             return;
         }
 
@@ -609,11 +609,11 @@ public class PC11xx {
 
         if (ret != LibUsb.SUCCESS)
         {
-            LOGGER.error("Ошибка конфигурирования PC11XX");
+            logger.error("Ошибка конфигурирования PC11XX");
             LibUsb.close(handle);
             if (ret == LibUsb.ERROR_BUSY)
             {
-                LOGGER.error("Устройство PC11XX занято");
+                logger.error("Устройство PC11XX занято");
             }
             return;
         }
@@ -629,7 +629,7 @@ public class PC11xx {
         buf.position(0);
         buf.put((byte)(((sendRepeat & 0x3) << 6) + 0x30));
 
-        LOGGER.debug("PC11XX содержимое буффера: " + command.get(0) + " " + command.get(1) + " " + command.get(2) + " " + command.get(3)
+        logger.debug("PC11XX buffer: " + command.get(0) + " " + command.get(1) + " " + command.get(2) + " " + command.get(3)
                 + " " + command.get(4) + " " + command.get(5) + " " + command.get(6)
                 + " " + command.get(7));
 
