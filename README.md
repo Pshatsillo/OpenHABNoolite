@@ -42,16 +42,16 @@ Change driver to WinUSB or libusb-win32 - they both work.
     	noolite:PC=32
 ```
 
-- ## For RX2164:
+- ## For [RX2164](http://www.noo.com.by/adapter-dlya-kompyutera-rx2164.html):
 
-- ## Binding:
-
-	**GENERAL**  
+	 **GENERAL:** 
+	
      **{noolite="Receive:bind"}**  
      **{noolite="Receive:unbind"}**  
      **{noolite="Receive:test"}**  
      **{noolite="Receive:channelNumber:Type"}**
-
+     
+- ## Binding:
 - **items:**
 
 		Number Read_channel_setpoint "Receiver channel: [%d]" 
@@ -114,4 +114,11 @@ Change driver to WinUSB or libusb-win32 - they both work.
     String Radiopult313_button3 {noolite="Receive:4:PU313"}
 	```
     
+    - ## For [РС1ххх](http://www.noo.com.by/adapter-noolite-pc.html):
+    **GENERAL:** 
     
+     **{noolite="Send:bind"}**  
+     **{noolite="Send:unbind"}**  
+     **{noolite="Receive:test"}**  
+     **{noolite="Send:channelNumber"}**
+     **{noolite="Send:channelNumber:RGB"}**
