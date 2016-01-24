@@ -8,3 +8,5 @@ org.openhab.binding.noolite/src/main/java/ru/iris/noolite4j/TestPC11xx.java
 org.openhab.binding.noolite/tempBuffer
 
 plugins/org.openhab.binding.noolite_1.0.0.201601041934.jar
+
+plugins/org.openhab.binding.noolite_1.0.0.7.jar
