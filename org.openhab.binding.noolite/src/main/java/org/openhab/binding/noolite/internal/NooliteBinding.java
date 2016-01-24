@@ -14,13 +14,11 @@ import org.apache.commons.lang.StringUtils;
 import org.openhab.binding.noolite.NooliteBindingProvider;
 import org.openhab.binding.noolite.internal.noolite4j.RX2164;
 import org.openhab.binding.noolite.internal.noolite4j.watchers.BatteryState;
-import org.openhab.binding.noolite.internal.noolite4j.watchers.CommandType;
 import org.openhab.binding.noolite.internal.noolite4j.watchers.Notification;
-import org.openhab.binding.noolite.internal.noolite4j.watchers.SensorType;
 import org.openhab.binding.noolite.internal.noolite4j.watchers.Watcher;
 import org.openhab.core.binding.AbstractActiveBinding;
 import org.openhab.core.events.EventPublisher;
-import org.openhab.core.library.types.HSBType;
+import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.types.Command;
@@ -130,9 +128,7 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 	    rxw.open();
 	    rxw.addWatcher(watcher);
 	    rxw.start();
-
 	}
-
     }
 
     protected void updateValues(Notification notification) {
@@ -156,11 +152,9 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 		    logger.debug("Channel #" + provider.getChannel(itemname));
 		    logger.debug("Type: " + provider.getType(itemname));
 		    logger.debug("DeviceType: " + provider.getDeviceType(itemname));
-		    // logger.debug("DeviceItemType: " +
-		    // provider.getItemType(itemname));
+		    logger.debug("Command: " + notification.getType().name());
+		    
 		    String[] DeviceType = provider.getDeviceType(itemname).split("_");
-		    // logger.debug("device is: " + DeviceType[0] + " parameter
-		    // is: " + DeviceType[1]);
 		    if (notification.getType().name().equals("UNBIND"))
 			rxw.unbindChannel(notification.getChannel());
 
@@ -169,10 +163,10 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 			    break;
 			} else if (DeviceType[1].equals("t")) {
 			    eventPublisher.postUpdate(itemname,
-				    StringType.valueOf(String.valueOf(notification.getValue("temp"))));
+				    DecimalType.valueOf(String.valueOf(notification.getValue("temp"))));
 			} else if (DeviceType[1].equals("h")) {
 			    eventPublisher.postUpdate(itemname,
-				    StringType.valueOf(String.valueOf(notification.getValue("humi"))));
+				    DecimalType.valueOf(String.valueOf(notification.getValue("humi"))));
 			} else if (DeviceType[1].equals("batt")) {
 			    BatteryState battery = (BatteryState) notification.getValue("battery");
 			    eventPublisher.postUpdate(itemname, StringType.valueOf(String.valueOf(battery.name())));
@@ -186,24 +180,6 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 
 	    }
 	}
-
-	/*
-	 * System.out.println("----------------------------------");
-	 * System.out.println("RX2164 receive command: "); System.out.println(
-	 * "Device: " + notification.getChannel()); System.out.println(
-	 * "Command: " + notification.getType().name()); System.out.println(
-	 * "Data format: " + notification.getDataFormat().name());
-	 * 
-	 * // Передаются данные с датчика if (notification.getType() ==
-	 * CommandType.TEMP_HUMI) { SensorType sensor = (SensorType)
-	 * notification.getValue("sensortype"); BatteryState battery =
-	 * (BatteryState) notification.getValue("battery");
-	 * 
-	 * System.out.println("Temp: " + notification.getValue("temp"));
-	 * System.out.println("Himidity: " + notification.getValue("humi"));
-	 * System.out.println("Sensor type: " + sensor.name());
-	 * System.out.println("Battery: " + battery.name()); }
-	 */
     }
 
     /**
