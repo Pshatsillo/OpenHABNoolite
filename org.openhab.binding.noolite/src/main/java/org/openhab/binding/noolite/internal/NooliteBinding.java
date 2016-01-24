@@ -164,7 +164,7 @@ public class NooliteBinding extends AbstractActiveBinding<NooliteBindingProvider
 		    if (notification.getType().name().equals("UNBIND"))
 			rxw.unbindChannel(notification.getChannel());
 
-		    if (DeviceType[0].equals("PT111")) {
+		    if (DeviceType[0].contains("PT11")) {
 			if (notification.getType().name().equals("TURN_OFF")) {
 			    break;
 			} else if (DeviceType[1].equals("t")) {
