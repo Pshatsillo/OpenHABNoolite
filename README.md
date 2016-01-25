@@ -112,8 +112,8 @@ Change driver to WinUSB or libusb-win32 - they both work.
   - **items:**
     ```
     //sensors
-	String Temperature {noolite="Receive:1:PT111_t"}
-	String Humidity {noolite="Receive:1:PT111_h"}
+	Number Temperature {noolite="Receive:1:PT111_t"}
+	Number Humidity {noolite="Receive:1:PT111_h"}
 	String BatteryState {noolite="Receive:1:PT111_batt"}
     //switches
     String Radiopult313_button1 {noolite="Receive:2:PU313"}
