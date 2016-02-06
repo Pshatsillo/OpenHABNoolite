@@ -17,9 +17,10 @@
 package org.openhab.binding.noolite.internal.noolite4j.watchers;
 
 /**
- * Состояние батареи датчика
+ * @author Nikolay Viguro
+ * @since 1.0.0
  */
+
 public enum BatteryState {
-    OK,
-    REPLACE
+    OK, REPLACE
 }

@@ -17,12 +17,10 @@
 package org.openhab.binding.noolite.internal.noolite4j.watchers;
 
 /**
- * Формат передаваемых данных
+ * @author Nikolay Viguro
+ * @since 1.0.0
  */
+
 public enum DataFormat {
-    NO_DATA,
-    ONE_BYTE,
-    TWO_BYTE,
-    FOUR_BYTE,
-    LED
+    NO_DATA, ONE_BYTE, TWO_BYTE, FOUR_BYTE, LED
 }

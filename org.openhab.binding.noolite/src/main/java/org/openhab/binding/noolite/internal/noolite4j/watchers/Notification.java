@@ -16,12 +16,16 @@
 
 package org.openhab.binding.noolite.internal.noolite4j.watchers;
 
+/**
+ * @author  Nikolay Viguro
+ * @since 1.0.0
+ */
+
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Notification
-{
+public class Notification {
     private ByteBuffer buffer;
     private CommandType type;
     private DataFormat dataFormat;
@@ -29,52 +33,50 @@ public class Notification
     private Map<String, Object> data = new HashMap<String, Object>();
 
     public ByteBuffer getBuffer() {
-        return buffer;
+	return buffer;
     }
 
     public void setBuffer(ByteBuffer buffer) {
-        this.buffer = buffer;
+	this.buffer = buffer;
     }
 
     public CommandType getType() {
-        return type;
+	return type;
     }
 
     public void setType(CommandType type) {
-        this.type = type;
+	this.type = type;
     }
 
     public DataFormat getDataFormat() {
-        return dataFormat;
+	return dataFormat;
     }
 
     public void setDataFormat(DataFormat dataFormat) {
-        this.dataFormat = dataFormat;
+	this.dataFormat = dataFormat;
     }
 
     public byte getChannel() {
-        return channel;
+	return channel;
     }
 
     public void setChannel(byte channel) {
-        this.channel = channel;
+	this.channel = channel;
     }
 
     public Map<String, ?> getData() {
-        return data;
+	return data;
     }
 
     public void setData(Map<String, Object> data) {
-        this.data = data;
+	this.data = data;
     }
 
-    public void addData(String key, Object value)
-    {
-        data.put(key, value);
+    public void addData(String key, Object value) {
+	data.put(key, value);
     }
 
-    public Object getValue(String key)
-    {
-        return data.get(key);
+    public Object getValue(String key) {
+	return data.get(key);
     }
 }

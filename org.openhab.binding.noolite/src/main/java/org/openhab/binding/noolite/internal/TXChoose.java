@@ -1,5 +1,12 @@
 package org.openhab.binding.noolite.internal;
 
+/**
+ * This class is responsible for choosing PC dongle type.
+ * 
+ * @author Petr Shatsillo
+ * @since 1.0.0
+ */
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -16,6 +16,11 @@
 
 package org.openhab.binding.noolite.internal.noolite4j.watchers;
 
+/**
+ * @author Nikolay Viguro
+ * @since 1.0.0
+ */
+
 public interface Watcher {
     public void onNotification(Notification notification);
 }

@@ -16,19 +16,11 @@
 
 package org.openhab.binding.noolite.internal.noolite4j.watchers;
 
+/**
+ * @author Nikolay Viguro
+ * @since 1.0.0
+ */
+
 public enum SensorType {
-    /**
-     * Зарезервировано
-     */
-    RESERVED,
-
-    /**
-     * Датчик температуры
-     */
-    PT112,
-
-    /**
-     * Датчик температуры и влажности
-     */
-    PT111
+    RESERVED, PT112, PT111
 }

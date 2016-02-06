@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is responsible for parsing the binding configuration.
  * 
- * @author Petros
+ * @author Petr Shatsillo
  * @since 1.0.0
  */
 public class NooliteGenericBindingProvider extends AbstractGenericBindingProvider implements NooliteBindingProvider {

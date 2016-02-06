@@ -12,7 +12,7 @@ import org.openhab.core.binding.BindingProvider;
 import org.openhab.core.items.Item;
 
 /**
- * @author Petros
+ * @author Petr Shatsillo
  * @since 1.0.0
  */
 public interface NooliteBindingProvider extends BindingProvider {
